@@ -36,3 +36,11 @@ which_cmd GIT_CMD git
 which_cmd CURL_CMD curl
 which_cmd WGET_CMD wget
 which_cmd PHP_CMD php
+
+if [ -a "wp-cli.phar" ]
+then
+        echo "SUCCESS."
+else
+        echo "ERROR."
+        exit 1
+fi
