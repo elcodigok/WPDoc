@@ -35,3 +35,4 @@ which_cmd SED_CMD sed
 which_cmd GIT_CMD git
 which_cmd CURL_CMD curl
 which_cmd WGET_CMD wget
+which_cmd PHP_CMD php
