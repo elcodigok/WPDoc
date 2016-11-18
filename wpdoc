@@ -37,9 +37,26 @@ which_cmd CURL_CMD curl
 which_cmd WGET_CMD wget
 which_cmd PHP_CMD php
 
+while [[ $# -gt 1 ]]
+do
+key="$1"
+
+case $key in
+    -d|--dir)
+    DIRECTORY="$2"
+    shift # past argument
+    ;;
+    *)
+            # unknown option
+    ;;
+esac
+done
+
 if [ -a "wp-cli.phar" ]
 then
         echo "SUCCESS."
+        VERSION=$($PHP_CMD wp-cli.phar core version --path=$DIRECTORY)
+        echo "WordPress Version: " ${VERSION}
 else
         echo "ERROR."
         exit 1
