@@ -5,6 +5,7 @@ import os
 import sys
 import time
 
+from datetime import datetime
 from optparse import OptionParser
 from optparse import OptionGroup
 
@@ -21,9 +22,9 @@ class registerWordPress():
                         print "Show STAT Directory: %s" %(os.stat(r))
                         print "Show STATVFS Directory: %s" %(os.statvfs(r))
                         print "Show GETSIZE Directory: %s" %(os.path.getsize(r))
-                        print "Show GETATIME Directory: %s" %(os.path.getatime(r))
-                        print "Show GETMTIME Directory: %s" % (os.path.getmtime(r))
-                        print "Show CTIME Directory: %s" %(os.path.getctime(r))
+                        print "Show GETATIME Directory: %s" %(datetime.fromtimestamp(os.path.getatime(r)).strftime('%Y-%m-%d %H:%M:%S'))
+                        print "Show MODIFIED TIME Directory: %s" % (datetime.fromtimestamp(os.path.getmtime(r)).strftime('%Y-%m-%d %H:%M:%S'))
+                        print "Show CREATED TIME Directory: %s" %(datetime.fromtimestamp(os.path.getctime(r)).strftime('%Y-%m-%d %H:%M:%S'))
                         self.count_directory += 1
                         for wpfile in f:
                                 #os.chmod(os.path.join(r, wpfile), 0644)
@@ -31,9 +32,9 @@ class registerWordPress():
                                 print "\tShow STAT File: %s" %(os.stat(r + "/" + wpfile))
                                 print "\tShow STATVFS File: %s" %(os.statvfs(r + "/" + wpfile))
                                 print "\tShow GETSIZE File: %s" %(os.path.getsize(r + "/" + wpfile))
-                                print "\tShow GETATIME File: %s" %(os.path.getatime(r + "/" + wpfile))
-                                print "\tShow GETMTIME File: %s" % (os.path.getmtime(r + "/" + wpfile))
-                                print "\tShow CTIME File: %s" %(os.path.getctime(r + "/" + wpfile))
+                                print "\tShow GETATIME File: %s" %(datetime.fromtimestamp(os.path.getatime(r + "/" + wpfile)).strftime('%Y-%m-%d %H:%M:%S'))
+                                print "\tShow MODIFIED TIME File: %s" % (datetime.fromtimestamp(os.path.getmtime(r + "/" + wpfile)).strftime('%Y-%m-%d %H:%M:%S'))
+                                print "\tShow CREATED TIME File: %s" %(datetime.fromtimestamp(os.path.getctime(r + "/" + wpfile)).strftime('%Y-%m-%d %H:%M:%S'))
                                 
                                 openedFile = open(r + "/" + wpfile)
                                 readFile = openedFile.read()
