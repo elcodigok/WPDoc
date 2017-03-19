@@ -27,7 +27,6 @@ class registerWordPress():
                         print "Show CREATED TIME Directory: %s" %(datetime.fromtimestamp(os.path.getctime(r)).strftime('%Y-%m-%d %H:%M:%S'))
                         self.count_directory += 1
                         for wpfile in f:
-                                #os.chmod(os.path.join(r, wpfile), 0644)
                                 print "\tShow PATH File: %s" %(r + "/" + wpfile)
                                 print "\tShow STAT File: %s" %(os.stat(r + "/" + wpfile))
                                 print "\tShow STATVFS File: %s" %(os.statvfs(r + "/" + wpfile))
@@ -50,15 +49,29 @@ class registerWordPress():
                                 print "\tShow SHA-1 File: %s" %(sha1Hashed)
                                 
                                 self.count_file += 1
+                                print ("\t" + '-' * 67)
                                 print 
+                        print('-' * 75)
                         print
                 print "Count Directory: %s" % (self.count_directory)
                 print "Count File: %s" % (self.count_file)
-                        
+
+class classProject():
+        def __init__(self, verbose=False):
+                self.verbose = verbose
+                self.name = ""
+                self.directory = ""
+                self.description = ""
+        
+        def setName(self):
+                name = raw_input("Name Project: ")
+                self.name = name
+        
+        def getName(self):
+                return self.name
 
 def cmdLineParser():
 	"""Implementation to WPDoc."""
-	
 	usage = "usage: python %prog [options]"
 	version = 0.1
 	parser = OptionParser(usage, version=version)
@@ -68,6 +81,7 @@ def cmdLineParser():
 	target = OptionGroup(parser, "Target", "At least one of these options has to be provided to define the Directory Work.")
 	target.add_option("-d", "--dir", dest="path", help="**REQUIRED** -"
 					  " Working Directory", metavar="DIRECTORY")
+        target.add_option("--new", action="store_true", dest="new", help="New proyect for WPDoc.")
 
 	parser.add_option_group(target)
 
@@ -78,6 +92,9 @@ def cmdLineParser():
 		sys.exit()
 
         options.path = os.path.abspath(options.path)
+        
+        if options.new:
+                classProject(False).setName()
         
         if os.path.exists(options.path):
                 registerWordPress(options.path, False).showObject()
