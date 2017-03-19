@@ -6,6 +6,16 @@ import sys
 from optparse import OptionParser
 from optparse import OptionGroup
 
+class registerWordPress():
+        def __init__(self, directory, verbose=False):
+                self.directory = os.path.abspath(directory)
+                self.mode_verbose = verbose
+        
+        def showObject(self):
+                for r, d, f in os.walk(self.directory):
+                        print "Show PATH: %s" %(r)
+                        
+
 def cmdLineParser():
 	"""Implementation to WPDoc."""
 	
@@ -26,6 +36,11 @@ def cmdLineParser():
 	if options.path is None:
 		parser.print_help()
 		sys.exit()
+
+        options.path = os.path.abspath(options.path)
+        
+        if os.path.exists(options.path):
+                registerWordPress(options.path, False).showObject()
 
 if __name__ == "__main__":
 	cmdLineParser()
