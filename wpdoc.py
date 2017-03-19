@@ -8,6 +8,7 @@ import time
 from datetime import datetime
 from optparse import OptionParser
 from optparse import OptionGroup
+from sqlobject import *
 
 class registerWordPress():
         def __init__(self, directory, verbose=False):
@@ -79,25 +80,27 @@ def cmdLineParser():
 					  dest="verbose", default=False,
 					  help="Verbose.")
 	target = OptionGroup(parser, "Target", "At least one of these options has to be provided to define the Directory Work.")
-	target.add_option("-d", "--dir", dest="path", help="**REQUIRED** -"
-					  " Working Directory", metavar="DIRECTORY")
+	#target.add_option("-d", "--dir", dest="path", help="**REQUIRED** -"
+					  #" Working Directory", metavar="DIRECTORY")
         target.add_option("--new", action="store_true", dest="new", help="New proyect for WPDoc.")
+        
+        target.add_option("--db", dest="database", help="**REQUIRED** - Database Example project.db")
 
 	parser.add_option_group(target)
 
 	(options, args) = parser.parse_args()
 
-	if options.path is None:
+	if options.database is None:
 		parser.print_help()
 		sys.exit()
 
-        options.path = os.path.abspath(options.path)
+        #options.path = os.path.abspath(options.path)
         
         if options.new:
                 classProject(False).setName()
         
-        if os.path.exists(options.path):
-                registerWordPress(options.path, False).showObject()
+        #if os.path.exists(options.path):
+                #registerWordPress(options.path, False).showObject()
 
 if __name__ == "__main__":
 	cmdLineParser()
