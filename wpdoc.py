@@ -10,6 +10,33 @@ from optparse import OptionParser
 from optparse import OptionGroup
 from sqlobject import *
 
+class wpProject(SQLObject):
+        name = StringCol(length=100)
+        directory = StringCol(length=255)
+        description = StringCol(default=None)
+        url = StringCol(length=255, default=None)
+        createdat = DateTimeCol(default=None)
+
+class registerDatabase():
+        def __init__(self, database):
+                self.database = database
+        
+        def connectDatabase(self):
+                self.connection_string = 'sqlite:' + self.database
+                self.connection = connectionForURI(self.connection_string)
+                sqlhub.processConnection = self.connection
+        
+        def isNewDatabase(self):
+                if os.path.exists(self.database):
+                        self.connectDatabase()
+                else:
+                        self.connectDatabase()
+                        wpProject.createTable()
+        
+        def saveData(self, name, directory):
+                wpProject(name=name, directory=directory)
+
+
 class registerWordPress():
         def __init__(self, directory, verbose=False):
                 self.directory = os.path.abspath(directory)
@@ -70,6 +97,17 @@ class classProject():
         
         def getName(self):
                 return self.name
+        
+        def setDirectoy(self):
+                directory = raw_input("PATH to VirtulHost: ")
+                self.directory = directory
+        
+        def getDirectory(self):
+                return self.directory
+        
+        def setDescription(self):
+                description = raw_input("Description: ")
+                self.description = description
 
 def cmdLineParser():
 	"""Implementation to WPDoc."""
@@ -94,13 +132,16 @@ def cmdLineParser():
 		parser.print_help()
 		sys.exit()
 
-        #options.path = os.path.abspath(options.path)
+        options.database = os.path.abspath(options.database)
+        print options.database
         
         if options.new:
-                classProject(False).setName()
-        
-        #if os.path.exists(options.path):
-                #registerWordPress(options.path, False).showObject()
+                my_database = registerDatabase(options.database)
+                my_database.isNewDatabase()
+                my_project = classProject(False)
+                my_project.setName()
+                my_project.setDirectoy()
+                my_database.saveData(my_project.getName(), my_project.getDirectory())
 
 if __name__ == "__main__":
 	cmdLineParser()
