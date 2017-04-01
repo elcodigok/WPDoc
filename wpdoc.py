@@ -16,7 +16,21 @@ class wpProject(SQLObject):
     directory = StringCol(length=255)
     description = StringCol(default=None)
     url = StringCol(length=255, default=None)
-    createdat = DateTimeCol(default=None)
+    created = DateTimeCol(default=DateTimeCol.now)
+
+
+class wpRevision(SQLObject):
+    name = StringCol(length= 100)
+    notes = StringCol(default='')
+    created = DateTimeCol(default=DateTimeCol.now)
+
+
+class wpObject(SQLObject):
+    name = StringCol(length=100)
+    path = StringCol(length=255)
+    objecttype = EnumCol(enumValues=['file', 'directory'])
+    created = DateTimeCol(default=DateTimeCol.now)
+    revision = ForeignKey('wpRevision')
 
 
 class registerDatabase():
@@ -34,6 +48,8 @@ class registerDatabase():
         else:
             self.connectDatabase()
             wpProject.createTable()
+            wpRevision.createTable()
+            wpObject.createTable()
 
     def saveData(self, name, directory):
         wpProject(name=name, directory=directory)
