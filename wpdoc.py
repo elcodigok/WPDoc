@@ -51,8 +51,8 @@ class registerDatabase():
             wpRevision.createTable()
             wpObject.createTable()
 
-    def saveData(self, name, directory):
-        wpProject(name=name, directory=directory)
+    def saveData(self, name, directory, url):
+        wpProject(name=name, directory=directory, url=url)
 
 
 class registerWordPress():
@@ -126,25 +126,35 @@ class classProject():
         self.name = ""
         self.directory = ""
         self.description = ""
+        self.url = ""
 
     def setName(self):
-        name = raw_input("Name Project: ")
+        name = raw_input("WPDoc::Name Project> ")
         self.name = name
 
     def getName(self):
         return self.name
 
     def setDirectoy(self):
-        directory = raw_input("PATH to VirtulHost: ")
+        directory = raw_input("WPDoc::PATH to VirtulHost> ")
         self.directory = directory
 
     def getDirectory(self):
         return self.directory
 
     def setDescription(self):
-        description = raw_input("Description: ")
+        description = raw_input("WPDoc::Description> ")
         self.description = description
 
+    def getDescription(self):
+        return self.description
+
+    def setUrl(self):
+        url = raw_input("WPDoc::URL (http://)> ")
+        self.url = url
+
+    def getUrl(self):
+        return self.url
 
 def cmdLineParser():
     """Implementation to WPDoc."""
@@ -158,10 +168,12 @@ def cmdLineParser():
         parser, "Target",
         "At least one of these options has to be provided to" +
         " define the Directory Work.")
-    target.add_option("--new", action="store_true",
-                      dest="new", help="New proyect for WPDoc.")
     target.add_option("--db", dest="database",
                       help="**REQUIRED** - Database Example project.db")
+    target.add_option("--new", action="store_true",
+                      dest="new", help="New proyect for WPDoc.")
+    target.add_option("--revision", action="store_true",
+                      dest="revision", help="Revision all files and directory.")
     parser.add_option_group(target)
 
     (options, args) = parser.parse_args()
@@ -178,7 +190,8 @@ def cmdLineParser():
         my_project = classProject(False)
         my_project.setName()
         my_project.setDirectoy()
-        my_database.saveData(my_project.getName(), my_project.getDirectory())
+        my_project.setUrl()
+        my_database.saveData(my_project.getName(), my_project.getDirectory(), my_project.getUrl())
 
 
 if __name__ == "__main__":
