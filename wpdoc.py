@@ -60,14 +60,18 @@ class registerDatabase():
 
 
 class registerWordPress():
-    def __init__(self, directory, verbose=False):
+    def __init__(self, directory, revision, verbose=False):
         self.directory = os.path.abspath(directory)
         self.mode_verbose = verbose
         self.count_directory = 0
         self.count_file = 0
+        self.revision = revision
 
     def showObject(self):
         for r, d, f in os.walk(self.directory):
+            
+            wpObject(name=r, path=r, objecttype='directory', revision=self.revision)
+            
             print "Show PATH Directory: %s" % (r)
             print "Show STAT Directory: %s" % (os.stat(r))
             print "Show STATVFS Directory: %s" % (os.statvfs(r))
@@ -114,6 +118,8 @@ class registerWordPress():
                 openedFile.close()
                 print "\tShow MD5 File: %s" % (md5Hashed)
                 print "\tShow SHA-1 File: %s" % (sha1Hashed)
+                
+                wpObject(name=wpfile, path=r+"/"+wpfile, objecttype='file', revision=self.revision)
 
                 self.count_file += 1
                 print ("\t" + '-' * 67)
@@ -207,6 +213,10 @@ def cmdLineParser():
             my_project.getName(), my_project.getDirectory(),
             my_project.getUrl(), my_project.getDbDirectory()
             )
+    if options.revision:
+        print "revision"
+        my_revision = wpRevision(name="Revision 1", notes="")
+        registerWordPress(my_project.getDirectory(), my_revision).showObject()
 
 
 if __name__ == "__main__":
