@@ -129,28 +129,28 @@ class classProject():
         self.url = ""
 
     def setName(self):
-        name = raw_input("WPDoc::Name Project> ")
+        name = raw_input("WPDoc:Project:Name > ")
         self.name = name
 
     def getName(self):
         return self.name
 
     def setDirectoy(self):
-        directory = raw_input("WPDoc::PATH to VirtulHost> ")
+        directory = raw_input("WPDoc:Project:PATH > ")
         self.directory = directory
 
     def getDirectory(self):
         return self.directory
 
     def setDescription(self):
-        description = raw_input("WPDoc::Description> ")
+        description = raw_input("WPDoc:Project:Description > ")
         self.description = description
 
     def getDescription(self):
         return self.description
 
     def setUrl(self):
-        url = raw_input("WPDoc::URL (http://)> ")
+        url = raw_input("WPDoc:Project:URL > ")
         self.url = url
 
     def getUrl(self):
