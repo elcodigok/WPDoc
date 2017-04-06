@@ -14,13 +14,14 @@ from sqlobject import *
 class wpProject(SQLObject):
     name = StringCol(length=100)
     directory = StringCol(length=255)
+    dbdirectory = StringCol(length=255)
     description = StringCol(default=None)
     url = StringCol(length=255, default=None)
     created = DateTimeCol(default=DateTimeCol.now)
 
 
 class wpRevision(SQLObject):
-    name = StringCol(length= 100)
+    name = StringCol(length=100)
     notes = StringCol(default='')
     created = DateTimeCol(default=DateTimeCol.now)
 
@@ -51,8 +52,11 @@ class registerDatabase():
             wpRevision.createTable()
             wpObject.createTable()
 
-    def saveData(self, name, directory, url):
-        wpProject(name=name, directory=directory, url=url)
+    def saveData(self, name, directory, url, dbdirectory):
+        wpProject(
+            name=name, directory=directory,
+            url=url, dbdirectory=dbdirectory
+            )
 
 
 class registerWordPress():
@@ -142,6 +146,13 @@ class classProject():
     def getDirectory(self):
         return self.directory
 
+    def setDbDirectory(self, path_db):
+        self.dbdirectory = path_db
+        print "WPDoc:Project:db > %s" % (self.getDbDirectory())
+
+    def getDbDirectory(self):
+        return self.dbdirectory
+
     def setDescription(self):
         description = raw_input("WPDoc:Project:Description > ")
         self.description = description
@@ -155,6 +166,7 @@ class classProject():
 
     def getUrl(self):
         return self.url
+
 
 def cmdLineParser():
     """Implementation to WPDoc."""
@@ -173,7 +185,7 @@ def cmdLineParser():
     target.add_option("--new", action="store_true",
                       dest="new", help="New proyect for WPDoc.")
     target.add_option("--revision", action="store_true",
-                      dest="revision", help="Revision all files and directory.")
+                      dest="revision", help="Revision all files and directory")
     parser.add_option_group(target)
 
     (options, args) = parser.parse_args()
@@ -182,16 +194,19 @@ def cmdLineParser():
         sys.exit()
 
     options.database = os.path.abspath(options.database)
-    print options.database
 
     if options.new:
         my_database = registerDatabase(options.database)
         my_database.isNewDatabase()
         my_project = classProject(False)
+        my_project.setDbDirectory(options.database)
         my_project.setName()
         my_project.setDirectoy()
         my_project.setUrl()
-        my_database.saveData(my_project.getName(), my_project.getDirectory(), my_project.getUrl())
+        my_database.saveData(
+            my_project.getName(), my_project.getDirectory(),
+            my_project.getUrl(), my_project.getDbDirectory()
+            )
 
 
 if __name__ == "__main__":
