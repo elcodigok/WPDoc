@@ -33,6 +33,7 @@ class wpObject(SQLObject):
     uid = IntCol()
     gid = IntCol()
     size = IntCol()
+    sha256 = StringCol(length=255, default=None)
     created = DateTimeCol(default=DateTimeCol.now)
     revision = ForeignKey('wpRevision')
 
@@ -116,21 +117,15 @@ class registerWordPress():
                         #os.path.getctime(r + "/" + wpfile)).strftime(
                             #'%Y-%m-%d %H:%M:%S'))
 
-                #openedFile = open(r + "/" + wpfile)
-                #readFile = openedFile.read()
+                openedFile = open(r + "/" + wpfile, "r")
+                readFile = openedFile.read()
+                openedFile.close()
 
-                #md5Hash = hashlib.md5(readFile)
-                #md5Hashed = md5Hash.hexdigest()
+                sha256Hash = hashlib.sha256(readFile)
+                sha256Hashed = sha256Hash.hexdigest()
 
-                #sha1Hash = hashlib.sha1(readFile)
-                #sha1Hashed = sha1Hash.hexdigest()
-
-                #openedFile.close()
-                #print "\tShow MD5 File: %s" % (md5Hashed)
-                #print "\tShow SHA-1 File: %s" % (sha1Hashed)
-                
                 wpObject(name=wpfile, path=r+"/"+wpfile, objecttype='file',
-                         uid=uid, gid=gid, size=size,revision=self.revision)
+                         uid=uid, gid=gid, size=size,sha256=sha256Hashed,revision=self.revision)
 
                 self.count_file += 1
                 print ("\t" + '-' * 67)
