@@ -30,6 +30,9 @@ class wpObject(SQLObject):
     name = StringCol(length=100)
     path = StringCol(length=255)
     objecttype = EnumCol(enumValues=['file', 'directory'])
+    uid = IntCol()
+    gid = IntCol()
+    size = IntCol()
     created = DateTimeCol(default=DateTimeCol.now)
     revision = ForeignKey('wpRevision')
 
@@ -70,56 +73,64 @@ class registerWordPress():
     def showObject(self):
         for r, d, f in os.walk(self.directory):
             
-            wpObject(name=r, path=r, objecttype='directory', revision=self.revision)
-            
             print "Show PATH Directory: %s" % (r)
-            print "Show STAT Directory: %s" % (os.stat(r))
-            print "Show STATVFS Directory: %s" % (os.statvfs(r))
-            print "Show GETSIZE Directory: %s" % (os.path.getsize(r))
-            print "Show GETATIME Directory: %s" % (
-                datetime.fromtimestamp(
-                    os.path.getatime(r)).strftime('%Y-%m-%d %H:%M:%S'))
-            print "Show MODIFIED TIME Directory: %s" % (
-                datetime.fromtimestamp(
-                    os.path.getmtime(r)).strftime('%Y-%m-%d %H:%M:%S'))
-            print "Show CREATED TIME Directory: %s" % (
-                datetime.fromtimestamp(
-                    os.path.getctime(r)).strftime('%Y-%m-%d %H:%M:%S'))
+            #print "Show STAT Directory: %s" % (os.stat(r))
+            uid = os.stat(r).st_uid
+            gid = os.stat(r).st_gid
+            size = os.stat(r).st_size
+            #print "Show STATVFS Directory: %s" % (os.statvfs(r))
+            #print "Show GETSIZE Directory: %s" % (os.path.getsize(r))
+            #print "Show GETATIME Directory: %s" % (
+                #datetime.fromtimestamp(
+                    #os.path.getatime(r)).strftime('%Y-%m-%d %H:%M:%S'))
+            #print "Show MODIFIED TIME Directory: %s" % (
+                #datetime.fromtimestamp(
+                    #os.path.getmtime(r)).strftime('%Y-%m-%d %H:%M:%S'))
+            #print "Show CREATED TIME Directory: %s" % (
+                #datetime.fromtimestamp(
+                    #os.path.getctime(r)).strftime('%Y-%m-%d %H:%M:%S'))
             self.count_directory += 1
+            wpObject(name=r, path=r, objecttype='directory',
+                     uid=uid, gid=gid, size=size,revision=self.revision)
+
             for wpfile in f:
                 print "\tShow PATH File: %s" % (r + "/" + wpfile)
-                print "\tShow STAT File: %s" % (os.stat(r + "/" + wpfile))
-                print "\tShow STATVFS File: %s" % (
-                    os.statvfs(r + "/" + wpfile))
-                print "\tShow GETSIZE File: %s" % (
-                    os.path.getsize(r + "/" + wpfile))
-                print "\tShow GETATIME File: %s" % (
-                    datetime.fromtimestamp(
-                        os.path.getatime(r + "/" + wpfile)).strftime(
-                            '%Y-%m-%d %H:%M:%S'))
-                print "\tShow MODIFIED TIME File: %s" % (
-                    datetime.fromtimestamp(
-                        os.path.getmtime(r + "/" + wpfile)).strftime(
-                            '%Y-%m-%d %H:%M:%S'))
-                print "\tShow CREATED TIME File: %s" % (
-                    datetime.fromtimestamp(
-                        os.path.getctime(r + "/" + wpfile)).strftime(
-                            '%Y-%m-%d %H:%M:%S'))
+                #print "\tShow STAT File: %s" % (os.stat(r + "/" + wpfile))
+                uid = os.stat(r + "/" + wpfile).st_uid
+                gid = os.stat(r + "/" + wpfile).st_gid
+                size = os.stat(r + "/" + wpfile).st_size
+                #print "\tShow STATVFS File: %s" % (
+                    #os.statvfs(r + "/" + wpfile))
+                #print "\tShow GETSIZE File: %s" % (
+                    #os.path.getsize(r + "/" + wpfile))
+                #print "\tShow GETATIME File: %s" % (
+                    #datetime.fromtimestamp(
+                        #os.path.getatime(r + "/" + wpfile)).strftime(
+                            #'%Y-%m-%d %H:%M:%S'))
+                #print "\tShow MODIFIED TIME File: %s" % (
+                    #datetime.fromtimestamp(
+                        #os.path.getmtime(r + "/" + wpfile)).strftime(
+                            #'%Y-%m-%d %H:%M:%S'))
+                #print "\tShow CREATED TIME File: %s" % (
+                    #datetime.fromtimestamp(
+                        #os.path.getctime(r + "/" + wpfile)).strftime(
+                            #'%Y-%m-%d %H:%M:%S'))
 
-                openedFile = open(r + "/" + wpfile)
-                readFile = openedFile.read()
+                #openedFile = open(r + "/" + wpfile)
+                #readFile = openedFile.read()
 
-                md5Hash = hashlib.md5(readFile)
-                md5Hashed = md5Hash.hexdigest()
+                #md5Hash = hashlib.md5(readFile)
+                #md5Hashed = md5Hash.hexdigest()
 
-                sha1Hash = hashlib.sha1(readFile)
-                sha1Hashed = sha1Hash.hexdigest()
+                #sha1Hash = hashlib.sha1(readFile)
+                #sha1Hashed = sha1Hash.hexdigest()
 
-                openedFile.close()
-                print "\tShow MD5 File: %s" % (md5Hashed)
-                print "\tShow SHA-1 File: %s" % (sha1Hashed)
+                #openedFile.close()
+                #print "\tShow MD5 File: %s" % (md5Hashed)
+                #print "\tShow SHA-1 File: %s" % (sha1Hashed)
                 
-                wpObject(name=wpfile, path=r+"/"+wpfile, objecttype='file', revision=self.revision)
+                wpObject(name=wpfile, path=r+"/"+wpfile, objecttype='file',
+                         uid=uid, gid=gid, size=size,revision=self.revision)
 
                 self.count_file += 1
                 print ("\t" + '-' * 67)
