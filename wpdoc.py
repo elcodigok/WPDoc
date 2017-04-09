@@ -34,6 +34,7 @@ class wpObject(SQLObject):
     gid = IntCol()
     size = IntCol()
     sha256 = StringCol(length=255, default=None)
+    content = StringCol(default=None)
     created = DateTimeCol(default=DateTimeCol.now)
     revision = ForeignKey('wpRevision')
 
@@ -65,6 +66,7 @@ class registerDatabase():
 
 class registerWordPress():
     def __init__(self, directory, revision, verbose=False):
+        self.extensions = [".eot", ".ttf", ".woff", ".png", ".gif", ".jpg", ".jpeg", ".swf", ".xap", ".gz"]
         self.directory = os.path.abspath(directory)
         self.mode_verbose = verbose
         self.count_directory = 0
@@ -122,10 +124,14 @@ class registerWordPress():
 
                 sha256Hash = hashlib.sha256(readFile)
                 sha256Hashed = sha256Hash.hexdigest()
+                
+                extension = os.path.splitext(wpfile)[1]
+                if extension in self.extensions:
+                    readFile = ""
 
                 wpObject(name=wpfile, path=r+"/"+wpfile, objecttype='file',
                          uid=uid, gid=gid, size=size, sha256=sha256Hashed,
-                         revision=self.revision)
+                         content=readFile,revision=self.revision)
 
                 self.count_file += 1
                 print ("\t" + '-' * 67)
