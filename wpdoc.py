@@ -35,6 +35,7 @@ class wpObject(SQLObject):
     size = IntCol()
     sha256 = StringCol(length=255, default=None)
     content = StringCol(default=None)
+    contentBinary = BLOBCol(default=None)
     created = DateTimeCol(default=DateTimeCol.now)
     revision = ForeignKey('wpRevision')
 
@@ -127,11 +128,14 @@ class registerWordPress():
                 
                 extension = os.path.splitext(wpfile)[1]
                 if extension in self.extensions:
+                    readFileBinary = readFile
                     readFile = ""
+                else:
+                    readFileBinary = ""
 
                 wpObject(name=wpfile, path=r+"/"+wpfile, objecttype='file',
                          uid=uid, gid=gid, size=size, sha256=sha256Hashed,
-                         content=readFile,revision=self.revision)
+                         content=readFile, contentBinary=readFileBinary,revision=self.revision)
 
                 self.count_file += 1
                 print ("\t" + '-' * 67)
