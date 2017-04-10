@@ -39,6 +39,11 @@ class wpObject(SQLObject):
     created = DateTimeCol(default=DateTimeCol.now)
     revision = ForeignKey('wpRevision')
 
+class wpChange(SQLObject):
+    action = EnumCol(enumValues=['add', 'remove', 'change'])
+    created = DateTimeCol(default=DateTimeCol.now)
+    revision = ForeignKey('wpRevision')
+    element = ForeignKey('wpObject')
 
 class registerDatabase():
     def __init__(self, database):
@@ -57,6 +62,7 @@ class registerDatabase():
             wpProject.createTable()
             wpRevision.createTable()
             wpObject.createTable()
+            wpChange.createTable()
 
     def saveData(self, name, directory, url, dbdirectory):
         wpProject(
@@ -67,7 +73,10 @@ class registerDatabase():
 
 class registerWordPress():
     def __init__(self, directory, revision, verbose=False):
-        self.extensions = [".eot", ".ttf", ".woff", ".png", ".gif", ".jpg", ".jpeg", ".swf", ".xap", ".gz"]
+        self.extensions = [
+            ".eot", ".ttf", ".woff", ".png", ".gif", ".jpg",
+            ".jpeg", ".swf", ".xap", ".gz"
+            ]
         self.directory = os.path.abspath(directory)
         self.mode_verbose = verbose
         self.count_directory = 0
@@ -125,7 +134,7 @@ class registerWordPress():
 
                 sha256Hash = hashlib.sha256(readFile)
                 sha256Hashed = sha256Hash.hexdigest()
-                
+
                 extension = os.path.splitext(wpfile)[1]
                 if extension in self.extensions:
                     readFileBinary = readFile
@@ -135,7 +144,8 @@ class registerWordPress():
 
                 wpObject(name=wpfile, path=r+"/"+wpfile, objecttype='file',
                          uid=uid, gid=gid, size=size, sha256=sha256Hashed,
-                         content=readFile, contentBinary=readFileBinary,revision=self.revision)
+                         content=readFile, contentBinary=readFileBinary,
+                         revision=self.revision)
 
                 self.count_file += 1
                 print ("\t" + '-' * 67)
@@ -237,12 +247,12 @@ def cmdLineParser():
                 my_project.getDirectory(), my_revision
             ).showObject()
         else:
-            print "Other revision."
+            # print "Other revision."
             my_database = registerDatabase(options.database)
             my_database.connectDatabase()
             p = wpProject.get(1).directory
+            my_revision = wpRevision(name="", notes="")
             print p
-            
 
 
 if __name__ == "__main__":
