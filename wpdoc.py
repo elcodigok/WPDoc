@@ -155,6 +155,24 @@ class registerWordPress():
         print "Count Directory: %s" % (self.count_directory)
         print "Count File: %s" % (self.count_file)
 
+    def check256(self):
+        for r, d, f in os.walk(self.directory):
+            print "Show PATH Directory: %s" % (r)
+            print wpObject.select(wpObject.q.path==r).count()
+            for wpfile in f:
+                print "\tShow PATH File: %s" % (r + "/" + wpfile)
+                openedFile = open(r + "/" + wpfile, "r")
+                readFile = openedFile.read()
+                openedFile.close()
+                sha256Hash = hashlib.sha256(readFile)
+                sha256Hashed = sha256Hash.hexdigest()
+                value = wpObject.select(wpObject.q.path==r + "/" + wpfile)[0].sha256
+                if sha256Hashed == value:
+                    print "True"
+                else:
+                    print "False"
+                
+
 
 class classProject():
     def __init__(self, verbose=False):
@@ -250,9 +268,11 @@ def cmdLineParser():
             # print "Other revision."
             my_database = registerDatabase(options.database)
             my_database.connectDatabase()
+            print wpProject.get(1).name
             p = wpProject.get(1).directory
-            my_revision = wpRevision(name="", notes="")
+            my_revision = wpRevision(name="Other Revision", notes="")
             print p
+            registerWordPress(wpProject.get(1).directory, my_revision).check256()
 
 
 if __name__ == "__main__":
